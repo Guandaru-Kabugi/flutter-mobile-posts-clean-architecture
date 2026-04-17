@@ -40,18 +40,32 @@ class _PostPageState extends State<PostPage> {
                 return Center(child: CircularProgressIndicator());
               } else if (state is PostSuccessState) {
                 return ListView.builder(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
                   itemCount: state.posts.length,
                   itemBuilder: (context, index) {
                     final post = state.posts[index];
-                    return PostWidget(post: post);
+
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      child: Card(
+                        elevation: 2,
+                        shadowColor: const Color.fromARGB(31, 176, 8, 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: PostWidget(post: post),
+                        ),
+                      ),
+                    );
                   },
                 );
-
               } else if (state is PostCreatedSuccessState) {
-                return Card(
-                  child: PostWidget(post: state.post),
-                );
-
+                return Card(child: PostWidget(post: state.post));
               } else if (state is PostErrorState) {
                 return Center(child: Text(state.message));
               } else {

@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_fb_auth_bloc/features/auth/presentation/blocs/auth_bloc/auth_bloc.dart';
 import 'package:flutter_fb_auth_bloc/features/auth/presentation/views/auth/signup.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class LoginWidget extends StatelessWidget {
+class LoginWidget extends StatefulWidget {
   const LoginWidget({
     super.key,
     required this.emailController,
@@ -14,9 +13,15 @@ class LoginWidget extends StatelessWidget {
   final TextEditingController emailController;
   final TextEditingController passwordController;
 
+  @override
+  State<StatefulWidget> createState() => _LoginWidgetState();
+}
+
+class _LoginWidgetState extends State<LoginWidget> {
+  bool _obscurePassword = true;
   void _handleLogIn(BuildContext context) {
-    final email = emailController.text.trim();
-    final password = passwordController.text.trim();
+    final email = widget.emailController.text.trim();
+    final password = widget.passwordController.text.trim();
 
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -48,37 +53,51 @@ class LoginWidget extends StatelessWidget {
             ),
             SizedBox(height: 20),
             TextField(
-              controller: emailController,
+              controller: widget.emailController,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(labelText: 'Email'),
             ),
             SizedBox(height: 20),
             TextField(
-              controller: passwordController,
-              obscureText: false,
-              decoration: InputDecoration(labelText: 'Password'),
+              controller: widget.passwordController,
+              obscureText: _obscurePassword,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
+              ),
             ),
             SizedBox(height: 20),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: isLoading ? null : () => _handleLogIn(context),
-                child: isLoading ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              color: Colors.white,
-                            ),
-                          ) : Text('Login'),
+                child: isLoading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
+                    : Text('Login'),
               ),
             ),
-            SizedBox(height: 20,),
+            SizedBox(height: 20),
             // Center(
             //   child: OutlinedButton.icon(
             //     onPressed: (){
             //       context.read<AuthBloc>().add(SignInWithGoogleRequested());
-            //     }, 
+            //     },
             //     icon: FaIcon(FontAwesomeIcons.google, color: Color.fromARGB(255,66, 133, 244),),
             //     label: Text('Sign in With Google',  style: TextStyle(fontSize: 16, color: Colors.black87))),
             // ),
